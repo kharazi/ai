@@ -137,11 +137,26 @@ def breadthFirstSearch(problem):
                 queue.push((pos, actions + [dir]))
 
 
-# def DLS(node, goal, depth):
-#     if depth == 0 and node == goal:
+def iterativeDeepeningSearch(problem):
+    print dir(problem)
+    def _dls(node, goal, depth):
+        if depth == 0 and problem.isGoalState():
+            return 
 
-# def iterativeDeepeningSearch(problem):
-#     util.raiseNotDefined()
+    # def _dfs(problem, limit=10):
+    #     stack = util.Stack()
+    #     state = problem.getStartState()
+    #     stack.push((state, list(), list()))
+    #     while not stack.isEmpty():
+    #         current_state, actions, visited = stack.pop()
+    #         for pos, dir, step in problem.getSuccessors(current_state):
+    #             if not pos in visited:
+    #                 if problem.isGoalState(pos):
+    #                     return actions + [dir]
+    #                 stack.push((pos, actions + [dir], visited + [current_state] ))
+
+
+    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
 
@@ -197,23 +212,23 @@ def heuristicFunction(state, problem=0):
 def aStarSearch(problem, heuristic=manhattanHeuristicFunction): # or heuristic=heuristicFunction
 
     closedset = []
-    fringe = util.PriorityQueue()
+    pqueue = util.PriorityQueue()
     start = problem.getStartState()
-    fringe.push((start, []), heuristic(start, problem))
+    pqueue.push((start, list()), heuristic(start, problem))
 
-    while not fringe.isEmpty():
-        node, actions = fringe.pop()
+    while not pqueue.isEmpty():
+        node, actions = pqueue.pop()
 
         if problem.isGoalState(node):
             return actions
 
         closedset.append(node)
 
-        for coord, direction, cost in problem.getSuccessors(node):
-            if not coord in closedset:
-                new_actions = actions + [direction]
-                score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
-                fringe.push( (coord, new_actions), score)
+        for pos, dir, cost in problem.getSuccessors(node):
+            if not pos in closedset:
+                new_actions = actions + [dir]
+                score = problem.getCostOfActions(new_actions) + heuristic(pos, problem)
+                pqueue.push( (pos, new_actions), score)
 
     return []
 
