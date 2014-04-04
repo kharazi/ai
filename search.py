@@ -137,26 +137,67 @@ def breadthFirstSearch(problem):
                 queue.push((pos, actions + [dir]))
 
 
+
 def iterativeDeepeningSearch(problem):
-    print dir(problem)
-    def _dls(node, goal, depth):
-        if depth == 0 and problem.isGoalState():
-            return 
+    class Node:
+        def __init__(self, id, state, parent_id, cost, direction, depth):
+            self.id = id
+            self.pid = parent_id
+            self.cost = cost
+            self.state = state
+            self.direction = direction
+            self.depth = depth
 
-    # def _dfs(problem, limit=10):
-    #     stack = util.Stack()
-    #     state = problem.getStartState()
-    #     stack.push((state, list(), list()))
-    #     while not stack.isEmpty():
-    #         current_state, actions, visited = stack.pop()
-    #         for pos, dir, step in problem.getSuccessors(current_state):
-    #             if not pos in visited:
-    #                 if problem.isGoalState(pos):
-    #                     return actions + [dir]
-    #                 stack.push((pos, actions + [dir], visited + [current_state] ))
+    def _dfs(problem, limit=999999): 
+        stack = util.Stack()
+        state = problem.getStartState()
+        nodes = []
+        firstNode = Node(0,state,-1,0,"First", 0)
+        nodes.append(firstNode)
+        my_dic = {}
+        my_dic[firstNode.state] = 0
+        stack.push(nodes[0])
+        n = firstNode
+        while stack.isEmpty() == False:
+            n = stack.pop()
+            if problem.isGoalState(n.state):
+                break
+            if(n.depth >= limit):
+                continue
+            successors = problem.getSuccessors(n.state)
+            for ns in successors:
+                tmp_node = Node(len(nodes),ns[0],n.id,n.cost + ns[2], ns[1], n.depth + 1)
+                if tmp_node.state in my_dic:
+                    pointer = my_dic[tmp_node.state]
+                    if nodes[pointer].cost > tmp_node.cost:
+                        nodes[pointer].cost = tmp_node.cost
+                        nodes[pointer].pid = tmp_node.pid
+                        nodes[pointer].direction = tmp_node.direction
+                        tmp_node = nodes[pointer]
+                    else:
+                        continue
+                else:
+                    nodes.append(tmp_node)
+                my_dic[tmp_node.state] = tmp_node.id
+                stack.push(tmp_node)
+        if not problem.isGoalState(n.state):
+            return False
+        path = []
+        while n.pid != -1:
+            path.append(n.direction)
+            n = nodes[n.pid]
+        path.reverse()
+        return path
 
+    path = False
+    for i in range(100):
+        print i
+        stack = util.Stack()
+        path = _dfs(problem, i)
+        if path != False:
+            break
+    return path
 
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
 
@@ -209,7 +250,7 @@ def heuristicFunction(state, problem=0):
     return result + food_count
 
 
-def aStarSearch(problem, heuristic=manhattanHeuristicFunction): # or heuristic=heuristicFunction
+def aStarSearch(problem, heuristic=heuristicFunction): # or heuristic=heuristicFunction
 
     closedset = []
     pqueue = util.PriorityQueue()

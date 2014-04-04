@@ -1,0 +1,10 @@
+Path found with total cost of 89 in 846.0 seconds
+Search nodes expanded: 2270075
+Pacman emerges victorious! Score: 541
+Average Score: 541.0
+Scores:        541.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+
+
+ba for 100 tayi
